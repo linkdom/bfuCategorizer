@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/linko1994/bfuCategorizer/game"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 //.index_game_cell_widget game_cell 	-- the parent div
@@ -28,6 +30,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(string(body))
+	games, err := game.Parse(strings.NewReader(string(body)))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("%+v\n", games)
 
 }
