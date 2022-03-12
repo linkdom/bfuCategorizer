@@ -1,40 +1,43 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/linko1994/bfuCategorizer/game"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"strings"
+	"os"
 )
 
-//.index_game_cell_widget game_cell 	-- the parent div
-//.label 								-- the game name
-//.user_row 							-- the publisher name
-//.short_text 							-- the description
+type Games struct {
+	Games []Game `json:"games"`
+}
+
+type Game struct {
+	Name        string `json:"name"`
+	Publisher   string `json:"publisher"`
+	Link        string `json:"link"`
+	Description string `json:"description"`
+}
 
 func main() {
 
-	resp, err := http.Get("https://itch.io/b/1316/bundle-for-ukraine")
+	jsonFile, err := os.Open("games.json")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error when opening file: ", err)
 	}
 
-	defer resp.Body.Close()
+	defer jsonFile.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+	var games Games
 
-	if err != nil {
-		log.Fatal(err)
+	json.Unmarshal(byteValue, &games)
+
+	for i := 0; i < len(games.Games); i++ {
+		fmt.Println("Name: " + games.Games[i].Name)
+		fmt.Println("Publisher: " + games.Games[i].Publisher)
+		fmt.Println("Link: " + games.Games[i].Link)
+		fmt.Println("Description: " + games.Games[i].Description)
 	}
-
-	games, err := game.Parse(strings.NewReader(string(body)))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("%+v\n", games)
-
 }
