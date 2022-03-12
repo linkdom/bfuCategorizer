@@ -42,7 +42,7 @@ func main() {
 		regex := regexp.MustCompile(`\[([^\[\]]*)\]`)
 		match := regex.FindAllStringSubmatch(games.Games[i].Name, -1)
 
-		if len(m) != 0 {
+		if len(match) != 0 {
 
 			r := strings.Replace(games.Games[i].Name, "["+match[0][1]+"]", "", 10)
 
